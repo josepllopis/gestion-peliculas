@@ -1,0 +1,136 @@
+body{
+    background-image: url("../img/peli2.jpg");
+
+}
+
+
+.principal{
+    display: flex;
+    justify-content: center; /* centra horizontalmente */
+    align-items: center;     /* centra verticalmente */
+    overflow: auto;
+    height: 90vh;
+}
+
+.hijo {
+    background-color: #FFF7F7;
+    width: 80%;
+    height: 80%;
+    overflow: auto;
+    position: relative; /* referencia para posicionar el botón */
+    text-align: center;
+}
+
+.hijo .btn-circles {
+    position: fixed;   /* posición relativa al .hijo */
+    bottom: 20px;         /* 20px desde el fondo del div */
+    right: 20px;          /* 20px desde el borde derecho */
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    padding: 0;
+    background-color: #fff;
+    color: #000;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s ease-in-out;
+}
+
+.hijo .btn-circles:hover {
+    background-color: #000;
+    color: #fff;
+    transform: scale(1.1);
+}
+
+.hijo .btn-circless {
+    position: fixed;   /* posición relativa al .hijo */
+    bottom: 20px;         /* 20px desde el fondo del div */
+    left: 20px;          /* 20px desde el borde derecho */
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    padding: 0;
+    background-color: #fff;
+    color: #000;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s ease-in-out;
+}
+
+.hijo .btn-circless:hover {
+    background-color: #000;
+    color: #fff;
+    transform: scale(1.1);
+}
+
+h1{
+    text-align: center;
+    padding: 25px;
+}
+
+table{
+    width: 75% !important;
+    margin: 0 auto;
+    justify-content: center;
+    padding: 25px;
+}
+
+td {
+  max-width: 200px;
+  overflow-x: auto;
+  white-space: nowrap;
+  text-align:center;
+  padding: 10px;
+}
+
+tr{
+    margin:10px;
+}
+
+th{
+    text-align: center;
+}
+
+.btn-circles {
+  width: 50px;          /* mismo ancho */
+  height: 50px;         /* mismo alto */
+  border-radius: 50%;   /* lo hace redondo */
+  display: flex;        /* centra el ícono */
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;      /* tamaño del ícono */
+  padding: 0;           /* quita el padding de Bootstrap */
+}
+
+select{
+        margin: 0 auto;
+        background-color: #fff;
+    	height: 30px;
+    	border-radius: 5px;
+    	border-style: solid;
+    	border-width: 1px;
+    	border-color: #0719A6;
+    	margin-top: 10px;
+    	padding-left: 10px;
+        margin-bottom: 20px;
+}
+
+.aplicarOrden{
+    background-color: #72A2FC;
+    color:white;
+    border-radius: 10px;
+    width:150px;
+    border-color:white;
+}
+
+
+
+
+
+
