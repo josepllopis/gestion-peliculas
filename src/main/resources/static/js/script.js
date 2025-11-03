@@ -93,7 +93,7 @@ async function ordenarPeliculasBackend() {
 
 
         if (response.status === 204) {
-                Swal.fire('Aviso', 'No hay películas para descargar.', 'info');
+                Swal.fire('Aviso', 'No hay películas para ordenar.', 'info');
                 return;
             }
     const peliculasOrdenadas = await response.json();
