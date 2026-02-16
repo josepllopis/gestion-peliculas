@@ -25,7 +25,7 @@ public class FilmMapper {
         FilmResponseDTO filmResponseDTO = new FilmResponseDTO();
         filmResponseDTO.setId(film.getId());
         filmResponseDTO.setNombre(film.getNombre());
-        filmResponseDTO.setPais(film.getPais());
+        filmResponseDTO.setPais(film.getPais().getNombre());
         filmResponseDTO.setFecha(film.getFecha());
         filmResponseDTO.setDuracion(String.valueOf(film.getDuracion()));
         filmResponseDTO.setDirector(film.getDirector());

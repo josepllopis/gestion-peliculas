@@ -2,6 +2,7 @@ package com.gestionPeliculas.gestionPeliculas.services;
 
 import com.gestionPeliculas.gestionPeliculas.dto.FilmRequestDTO;
 import com.gestionPeliculas.gestionPeliculas.dto.FilmResponseDTO;
+import com.gestionPeliculas.gestionPeliculas.exception.MovieAlreadyExistsException;
 import com.gestionPeliculas.gestionPeliculas.mapper.FilmMapper;
 import com.gestionPeliculas.gestionPeliculas.models.Film;
 import com.gestionPeliculas.gestionPeliculas.repository.FilmRepository;
@@ -11,7 +12,7 @@ import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -23,21 +24,21 @@ import java.util.Optional;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class FilmDaoImpl implements FilmDao{
 
     private final FilmRepository filmRepository;
     private final FilmMapper filmMapper;
 
-    public FilmDaoImpl(FilmRepository filmRepository, FilmMapper filmMapper) {
-        this.filmRepository = filmRepository;
-        this.filmMapper = filmMapper;
-    }
+
 
     @Override
     public FilmResponseDTO create(FilmRequestDTO filmRequestDTO) {
-        Film film = filmMapper.toEntity(filmRequestDTO);
-        Film filmInsertado = filmRepository.save(film);
-        return filmMapper.toResponse(filmInsertado);
+
+        if(filmRepository.existsByNombreAndDirector(filmRequestDTO.getNombre(),filmRequestDTO.getDirector())){
+            throw new MovieAlreadyExistsException("Ya existe la película con el nombre: "+filmRequestDTO.getNombre()+" del director: "+filmRequestDTO.getDirector());
+        }
+        return filmMapper.toResponse(filmRepository.save(filmMapper.toEntity(filmRequestDTO)));
 
     }
 
