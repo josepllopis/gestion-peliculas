@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class ControllerAdvice {
 
+    //Si no encuentra alguna entidad devuelve este error
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<String> entityNotFoundException(EntityNotFoundException ex){
         return ResponseEntity
@@ -23,6 +24,7 @@ public class ControllerAdvice {
                 .body(ex.getMessage());
     }
 
+    //Si insertamos un elemento no válido devuelve esta excepcion
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<String> illegalArgumentException(IllegalArgumentException ex){
         return ResponseEntity
@@ -30,6 +32,7 @@ public class ControllerAdvice {
                 .body(ex.getMessage());
     }
 
+    //Si añadimos una película que ya existe devuelve este error
     @ExceptionHandler(IllegalStateException.class)
     public ResponseEntity<String> handleIllegalState(IllegalStateException ex) {
         return ResponseEntity
@@ -37,6 +40,7 @@ public class ControllerAdvice {
                 .body(ex.getMessage());
     }
 
+    //Si la película ya existe devuelve este error
     @ExceptionHandler(MovieAlreadyExistsException.class)
     public ResponseEntity<Map<String,Object>> movieAlreadyExistsException(MovieAlreadyExistsException ex){
         LinkedHashMap<String,Object> body = new LinkedHashMap<>();
@@ -49,6 +53,7 @@ public class ControllerAdvice {
 
     }
 
+    //Si algún argumento no es válido devuelve este error
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String,Object>> methodArgumentNotValidException(MethodArgumentNotValidException ex){
 
