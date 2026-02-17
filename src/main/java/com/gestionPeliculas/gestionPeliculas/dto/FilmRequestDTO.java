@@ -1,9 +1,9 @@
 package com.gestionPeliculas.gestionPeliculas.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.gestionPeliculas.gestionPeliculas.enums.Pais;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,12 +14,15 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+
+
 public class FilmRequestDTO {
 
     @NotBlank(message = "El nombre es obligatorio")
     @Size(max = 200, message = "El nombre no puede superar los 300 caracteres")
     private String nombre;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
+    @PastOrPresent(message = "La fecha no puede ser futura")
     @NotNull(message = "La fecha es obligatoria")
     private Date fecha;
     @NotNull(message = "La duración es obligatoria")

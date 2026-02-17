@@ -2,17 +2,15 @@ package com.gestionPeliculas.gestionPeliculas.service;
 
 import com.gestionPeliculas.gestionPeliculas.dto.FilmRequestDTO;
 import com.gestionPeliculas.gestionPeliculas.dto.FilmResponseDTO;
+import com.gestionPeliculas.gestionPeliculas.enums.Pais;
 import com.gestionPeliculas.gestionPeliculas.mapper.FilmMapper;
 import com.gestionPeliculas.gestionPeliculas.models.Film;
 import com.gestionPeliculas.gestionPeliculas.repository.FilmRepository;
-import com.gestionPeliculas.gestionPeliculas.services.FilmDao;
 import com.gestionPeliculas.gestionPeliculas.services.FilmDaoImpl;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -27,7 +25,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-public class FilmServiceTests {
+public class FilmServiceTest {
 
     @Mock
     private FilmRepository filmRepository;
@@ -49,7 +47,7 @@ public class FilmServiceTests {
     void setUpPeliculas(){
         film1 = new Film();
         film1.setId(1L);
-        film1.setPais("España");
+        film1.setPais(Pais.ESPANA);
         film1.setPuntuacion(7.6);
         film1.setNombre("American X History");
         film1.setDirector("Almodovar");
@@ -59,7 +57,7 @@ public class FilmServiceTests {
 
         film2 = new Film();
         film2.setId(2L);
-        film2.setPais("Estados Unidos");
+        film2.setPais(Pais.ESTADOS_UNIDOS);
         film2.setPuntuacion(8.6);
         film2.setNombre("El Padrino I");
         film2.setDirector("Peter Lambaras");
@@ -69,7 +67,7 @@ public class FilmServiceTests {
 
         film3 = new Film();
         film3.setId(3L);
-        film3.setPais("Francia");
+        film3.setPais(Pais.FRANCIA);
         film3.setPuntuacion(5.6);
         film3.setNombre("Lo que el viento se llevó");
         film3.setDirector("Francua Aunda");

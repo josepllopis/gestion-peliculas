@@ -23,6 +23,7 @@ public class Film {
     @Size(max = 200, message = "El nombre no puede superar los 200 caracteres")
     private String nombre;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
+    @PastOrPresent(message = "La fecha no puede ser futura")
     @Temporal(TemporalType.DATE)
     @NotNull(message = "La fecha es obligatoria")
     private Date fecha;

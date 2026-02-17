@@ -1,5 +1,6 @@
 package com.gestionPeliculas.gestionPeliculas.repository;
 
+import com.gestionPeliculas.gestionPeliculas.enums.Pais;
 import com.gestionPeliculas.gestionPeliculas.models.Film;
 import lombok.AllArgsConstructor;
 import org.assertj.core.api.Assertions;
@@ -29,7 +30,7 @@ public class FilmRepositoryTest {
     @BeforeEach
     void setUpPeliculas(){
         film1 = new Film();
-        film1.setPais("España");
+        film1.setPais(Pais.ESPANA);
         film1.setPuntuacion(7.6);
         film1.setNombre("American X History");
         film1.setDirector("Almodovar");
@@ -38,7 +39,7 @@ public class FilmRepositoryTest {
         film1.setDuracion(120);
 
         film2 = new Film();
-        film2.setPais("Estados Unidos");
+        film2.setPais(Pais.ESTADOS_UNIDOS);
         film2.setPuntuacion(8.6);
         film2.setNombre("El Padrino I");
         film2.setDirector("Peter Lambaras");
@@ -47,7 +48,7 @@ public class FilmRepositoryTest {
         film2.setDuracion(187);
 
         film3 = new Film();
-        film3.setPais("Francia");
+        film3.setPais(Pais.FRANCIA);
         film3.setPuntuacion(5.6);
         film3.setNombre("Lo que el viento se llevó");
         film3.setDirector("Francua Aunda");
@@ -57,7 +58,7 @@ public class FilmRepositoryTest {
     }
 
 
-    @DisplayName("Test para guardar un empleado")
+    @DisplayName("Test para guardar una película")
     @Test
     void testGuardarFilm(){
 
