@@ -34,7 +34,7 @@ public class FilmController {
         return ResponseEntity.ok(filmDao.readAll());
     }
 
-    @Operation(summary = "Devolver película", description = "Devuelve la película de la bbdd que coincida con el ID que se le pasa por URL")
+    @Operation(summary = "Devolver película", description = "Devuelve la película de la bbdd que coincida con el ID que se le pasa por la URL")
     @GetMapping("/films/{id}")
     public ResponseEntity<FilmResponseDTO> getFilm(@PathVariable Long id){
 
