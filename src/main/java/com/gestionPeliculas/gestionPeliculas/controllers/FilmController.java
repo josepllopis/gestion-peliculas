@@ -28,7 +28,7 @@ public class FilmController {
 
 
 
-    @Operation(summary = "Lista de películas", description = "Trae una lista de todas las películas que se encuentran en la bbdd")
+    @Operation(summary = "Lista de películas", description = "Trae la lista de todas las películas que se encuentran en la bbdd")
     @GetMapping("/films")
     public ResponseEntity<List<FilmResponseDTO>> allFilms(){
         return ResponseEntity.ok(filmDao.readAll());
