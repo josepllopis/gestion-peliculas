@@ -101,7 +101,7 @@ form.addEventListener("submit", function(event) {
   agregarPelicula(nombre,pais,cine,duracion,director,puntuacion,fechaFormateada)
 
   // Redirigir a otra página
-  window.location.href = "peliculas.html"; // Cambia esto por la URL que quieras
+  window.location.href = "peliculas"; // Cambia esto por la URL que quieras
 });
 });
 
@@ -124,7 +124,7 @@ async function agregarPelicula(nombre,pais,cine,duracion,director,puntuacion,fec
       headers: getHeaders(),
       body: JSON.stringify(datos)
     });
-    window.location.href = "http://localhost:8096/peliculas.html";
+    window.location.href = "http://localhost:8096/peliculas";
 }
 
 function getHeaders(){

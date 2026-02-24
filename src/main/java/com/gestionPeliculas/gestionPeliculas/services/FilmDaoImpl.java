@@ -127,7 +127,7 @@ public class FilmDaoImpl implements FilmDao{
 
         Usuario usuario = usuarioRepository.findByUsername(userDetails.getUsername())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        return filmRepository.findByUsuario(usuario).stream().map(filmMapper::toResponse).toList();
+        return filmRepository.findByUsuario(usuario,sort).stream().map(filmMapper::toResponse).toList();
     }
 
     @Override
