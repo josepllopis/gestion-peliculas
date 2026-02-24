@@ -3,6 +3,7 @@ package com.gestionPeliculas.gestionPeliculas.controllers;
 import com.gestionPeliculas.gestionPeliculas.dto.FilmRequestDTO;
 import com.gestionPeliculas.gestionPeliculas.dto.FilmResponseDTO;
 
+import com.gestionPeliculas.gestionPeliculas.dto.RankingResponseDTO;
 import com.gestionPeliculas.gestionPeliculas.services.FilmDao;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -109,6 +110,20 @@ public class FilmController {
             return ResponseEntity.internalServerError().build();
         }
 
+
+
+    }
+
+    @GetMapping("/ranking")
+    public ResponseEntity<List<RankingResponseDTO>> devolverRanking(){
+
+        List<RankingResponseDTO> ranking = filmDao.getRanking();
+
+        if(ranking.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(ranking);
     }
 
 

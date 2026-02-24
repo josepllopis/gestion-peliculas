@@ -2,6 +2,7 @@ package com.gestionPeliculas.gestionPeliculas.services;
 
 import com.gestionPeliculas.gestionPeliculas.dto.FilmRequestDTO;
 import com.gestionPeliculas.gestionPeliculas.dto.FilmResponseDTO;
+import com.gestionPeliculas.gestionPeliculas.dto.RankingResponseDTO;
 import com.gestionPeliculas.gestionPeliculas.exception.FilmNotFoundException;
 import com.gestionPeliculas.gestionPeliculas.exception.MovieAlreadyExistsException;
 import com.gestionPeliculas.gestionPeliculas.mapper.FilmMapper;
@@ -128,6 +129,11 @@ public class FilmDaoImpl implements FilmDao{
         Usuario usuario = usuarioRepository.findByUsername(userDetails.getUsername())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
         return filmRepository.findByUsuario(usuario,sort).stream().map(filmMapper::toResponse).toList();
+    }
+
+    @Override
+    public List<RankingResponseDTO> getRanking() {
+        return filmRepository.getRanking();
     }
 
     @Override

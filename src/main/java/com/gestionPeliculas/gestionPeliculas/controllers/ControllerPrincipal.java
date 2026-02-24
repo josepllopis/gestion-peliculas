@@ -10,4 +10,9 @@ public class ControllerPrincipal {
     public String peliculas(){
         return "peliculas";
     }
+
+    @GetMapping("/ranking")
+    public String ranking(){
+        return "ranking";
+    }
 }
