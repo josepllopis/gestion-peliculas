@@ -1,5 +1,6 @@
 package com.gestionPeliculas.gestionPeliculas.controllers;
 
+import com.gestionPeliculas.gestionPeliculas.exception.FilmNotFoundException;
 import com.gestionPeliculas.gestionPeliculas.exception.MovieAlreadyExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -76,6 +77,17 @@ public class ControllerAdvice {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<String> handleInvalidJson(HttpMessageNotReadableException ex) {
         return ResponseEntity.badRequest().body("JSON inválido o campos no permitidos");
+    }
+
+    @ExceptionHandler(FilmNotFoundException.class)
+    public ResponseEntity<Map<String,Object>> filmNotFoundException(FilmNotFoundException ex){
+
+        LinkedHashMap<String,Object> body = new LinkedHashMap<>();
+        body.put("status", HttpStatus.NOT_FOUND.value());
+        body.put("errors", ex.getMessage());
+        body.put("timestamp", LocalDateTime.now());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
     }
 
 }

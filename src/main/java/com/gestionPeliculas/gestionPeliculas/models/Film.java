@@ -45,4 +45,8 @@ public class Film {
     @NotBlank(message = "El cine es obligatorio")
     @Size(max = 100, message = "El nombre del cine no puede superar los 100 caracteres")
     private String cinema;
+
+    @ManyToOne
+    @JoinColumn(name = "usuario_id")
+    private Usuario usuario;
 }

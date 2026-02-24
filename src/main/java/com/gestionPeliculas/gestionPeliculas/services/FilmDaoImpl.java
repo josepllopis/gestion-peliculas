@@ -2,10 +2,13 @@ package com.gestionPeliculas.gestionPeliculas.services;
 
 import com.gestionPeliculas.gestionPeliculas.dto.FilmRequestDTO;
 import com.gestionPeliculas.gestionPeliculas.dto.FilmResponseDTO;
+import com.gestionPeliculas.gestionPeliculas.exception.FilmNotFoundException;
 import com.gestionPeliculas.gestionPeliculas.exception.MovieAlreadyExistsException;
 import com.gestionPeliculas.gestionPeliculas.mapper.FilmMapper;
 import com.gestionPeliculas.gestionPeliculas.models.Film;
+import com.gestionPeliculas.gestionPeliculas.models.Usuario;
 import com.gestionPeliculas.gestionPeliculas.repository.FilmRepository;
+import com.gestionPeliculas.gestionPeliculas.repository.UsuarioRepository;
 import com.lowagie.text.*;
 import com.lowagie.text.Font;
 import com.lowagie.text.pdf.PdfPCell;
@@ -13,7 +16,9 @@ import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.awt.*;
@@ -29,31 +34,63 @@ public class FilmDaoImpl implements FilmDao{
 
     private final FilmRepository filmRepository;
     private final FilmMapper filmMapper;
+    private final UsuarioRepository usuarioRepository;
 
 
 
     @Override
-    public FilmResponseDTO create(FilmRequestDTO filmRequestDTO) {
+    public FilmResponseDTO create(FilmRequestDTO filmRequestDTO, UserDetails userDetails) {
 
-        if(filmRepository.existsByNombreAndDirector(filmRequestDTO.getNombre(),filmRequestDTO.getDirector())){
+        Usuario usuario = usuarioRepository.findByUsername(userDetails.getUsername())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        if(filmRepository.existsByNombreAndDirectorAndUsuario(filmRequestDTO.getNombre(),filmRequestDTO.getDirector(),usuario)){
             throw new MovieAlreadyExistsException("Ya existe la película con el nombre: "+filmRequestDTO.getNombre()+" del director: "+filmRequestDTO.getDirector());
         }
-        return filmMapper.toResponse(filmRepository.save(filmMapper.toEntity(filmRequestDTO)));
+        return filmMapper.toResponse(filmRepository.save(filmMapper.toEntity(filmRequestDTO,usuario)));
 
     }
 
     @Override
-    public Optional<FilmResponseDTO> read(long id) {
+    public Optional<FilmResponseDTO> read(long id,UserDetails userDetails) {
+        Usuario usuario = usuarioRepository.findByUsername(userDetails.getUsername())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        Film pelicula = filmRepository.findById(id)
+                .orElseThrow(() -> new FilmNotFoundException("Película no encontrada"));
+
+
+        if(!pelicula.getUsuario().getUsername().equals(userDetails.getUsername())){
+            throw new FilmNotFoundException("Película no encontrada");
+        }
+
+
         return filmRepository.findById(id).map(filmMapper::toResponse);
     }
 
     @Override
-    public List<FilmResponseDTO> readAll() {
-        return filmRepository.findAll().stream().map(filmMapper::toResponse).toList();
+    public List<FilmResponseDTO> readAll(UserDetails userDetails) {
+
+        Usuario usuario = usuarioRepository.findByUsername(userDetails.getUsername())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        return filmRepository.findByUsuario(usuario).stream().map(filmMapper::toResponse).toList();
+        //return filmRepository.findAll().stream().map(filmMapper::toResponse).toList();
     }
 
     @Override
-    public Optional<FilmResponseDTO> update(long id, FilmRequestDTO filmRequestDTO) {
+    public Optional<FilmResponseDTO> update(long id, FilmRequestDTO filmRequestDTO, UserDetails userDetails) {
+        Usuario usuario = usuarioRepository.findByUsername(userDetails.getUsername())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        Film pelicula = filmRepository.findById(id)
+                .orElseThrow(() -> new FilmNotFoundException("Película no encontrada"));
+
+
+        if(!pelicula.getUsuario().getUsername().equals(userDetails.getUsername())){
+            throw new FilmNotFoundException("Película no encontrada");
+        }
+
+
         return filmRepository.findById(id).map(film->{
             film.setPais(filmRequestDTO.getPais());
             film.setFecha(filmRequestDTO.getFecha());
@@ -68,20 +105,35 @@ public class FilmDaoImpl implements FilmDao{
     }
 
     @Override
-    public void delete(long id) {
+    public void delete(long id, UserDetails userDetails) {
+
+        Usuario usuario = usuarioRepository.findByUsername(userDetails.getUsername())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        Film pelicula = filmRepository.findById(id)
+                .orElseThrow(() -> new FilmNotFoundException("Película no encontrada"));
+
+
+        if(!pelicula.getUsuario().getUsername().equals(userDetails.getUsername())){
+           throw new FilmNotFoundException("Película no encontrada");
+        }
+
         Optional<Film> filmEliminar = filmRepository.findById(id);
         filmEliminar.ifPresent(filmRepository::delete);
     }
 
     @Override
-    public List<FilmResponseDTO> getAllSortedByPuntuacion(Sort sort) {
-        return filmRepository.findAll(sort).stream().map(filmMapper::toResponse).toList();
+    public List<FilmResponseDTO> getAllSortedByPuntuacion(Sort sort, UserDetails userDetails) {
+
+        Usuario usuario = usuarioRepository.findByUsername(userDetails.getUsername())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        return filmRepository.findByUsuario(usuario).stream().map(filmMapper::toResponse).toList();
     }
 
     @Override
-    public byte[] generarPdfDeFilms(String sortBy, String direction) throws IOException {
+    public byte[] generarPdfDeFilms(String sortBy, String direction, UserDetails userDetails) throws IOException {
         Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
-        List<FilmResponseDTO> datosFilms = getAllSortedByPuntuacion(sort);
+        List<FilmResponseDTO> datosFilms = getAllSortedByPuntuacion(sort,userDetails);
 
         if(datosFilms.isEmpty()){
             return null;
@@ -93,7 +145,7 @@ public class FilmDaoImpl implements FilmDao{
             document.open();
 
             Font tituloFont = new Font(Font.HELVETICA, 18, Font.BOLD);
-            Paragraph titulo = new Paragraph("Listado de Películas\n\n", tituloFont);
+            Paragraph titulo = new Paragraph("Listado de Películas("+userDetails.getUsername()+")"+"\n\n", tituloFont);
             titulo.setAlignment(Element.ALIGN_CENTER);
             titulo.setSpacingAfter(15f);
             document.add(titulo);

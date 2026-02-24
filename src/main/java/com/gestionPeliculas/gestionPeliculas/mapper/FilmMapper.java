@@ -3,6 +3,7 @@ package com.gestionPeliculas.gestionPeliculas.mapper;
 import com.gestionPeliculas.gestionPeliculas.dto.FilmRequestDTO;
 import com.gestionPeliculas.gestionPeliculas.dto.FilmResponseDTO;
 import com.gestionPeliculas.gestionPeliculas.models.Film;
+import com.gestionPeliculas.gestionPeliculas.models.Usuario;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
@@ -11,7 +12,7 @@ public class FilmMapper {
 
 
 
-    public Film toEntity(FilmRequestDTO filmRequestDTO){
+    public Film toEntity(FilmRequestDTO filmRequestDTO, Usuario usuario){
         Film film = new Film();
         film.setNombre(filmRequestDTO.getNombre());
         film.setPais(filmRequestDTO.getPais());
@@ -20,6 +21,7 @@ public class FilmMapper {
         film.setDirector(filmRequestDTO.getDirector());
         film.setPuntuacion(filmRequestDTO.getPuntuacion());
         film.setCinema(filmRequestDTO.getCinema());
+        film.setUsuario(usuario);
         return film;
     }
 
