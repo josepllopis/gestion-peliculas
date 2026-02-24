@@ -2,6 +2,7 @@ package com.gestionPeliculas.gestionPeliculas.services;
 
 import com.gestionPeliculas.gestionPeliculas.dto.FilmRequestDTO;
 import com.gestionPeliculas.gestionPeliculas.dto.FilmResponseDTO;
+import com.gestionPeliculas.gestionPeliculas.dto.RankingResponseDTO;
 import com.gestionPeliculas.gestionPeliculas.models.Film;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,5 +22,6 @@ public interface FilmDao {
     void delete(long id, UserDetails userDetails);
 
     List<FilmResponseDTO> getAllSortedByPuntuacion(Sort sort, UserDetails userDetails);
-    public byte[] generarPdfDeFilms(String sortBy, String direction, UserDetails userDetails) throws IOException;
+    byte[] generarPdfDeFilms(String sortBy, String direction, UserDetails userDetails) throws IOException;
+    List<RankingResponseDTO> getRanking();
 }

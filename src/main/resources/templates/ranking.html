@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Ranking Familiar 🎬</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1f1c2c, #928dab);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .ranking-container {
+            width: 90%;
+            max-width: 800px;
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            animation: fadeIn 0.6s ease-in-out;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 32px;
+            color: #333;
+        }
+
+        .ranking-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .ranking-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f4f6f9;
+            padding: 18px 25px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            transition: 0.3s ease;
+        }
+
+        .ranking-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .ranking-position {
+            font-size: 20px;
+            font-weight: bold;
+            width: 40px;
+        }
+
+        .ranking-name {
+            flex: 1;
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .ranking-count {
+            font-size: 16px;
+            font-weight: bold;
+            background: #6c63ff;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+        }
+
+        /* TOP 3 estilos especiales */
+
+        .first {
+            background: linear-gradient(135deg, #ffd700, #ffcc00);
+            color: #333;
+        }
+
+        .second {
+            background: linear-gradient(135deg, #c0c0c0, #d9d9d9);
+        }
+
+        .third {
+            background: linear-gradient(135deg, #cd7f32, #e6a15c);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+
+        @media (max-width: 600px) {
+            .ranking-container {
+                padding: 25px;
+            }
+
+            .ranking-name {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="ranking-container">
+    <h1>🏆 Ranking Familiar</h1>
+
+    <ul class="ranking-list" id="rankingList">
+
+        <li class="ranking-item first">
+            <span class="ranking-position">🥇</span>
+            <span class="ranking-name">Josep</span>
+            <span class="ranking-count">25 películas</span>
+        </li>
+
+        <li class="ranking-item second">
+            <span class="ranking-position">🥈</span>
+            <span class="ranking-name">Hermano</span>
+            <span class="ranking-count">18 películas</span>
+        </li>
+
+        <li class="ranking-item third">
+            <span class="ranking-position">🥉</span>
+            <span class="ranking-name">Madre</span>
+            <span class="ranking-count">15 películas</span>
+        </li>
+
+        <li class="ranking-item">
+            <span class="ranking-position">4</span>
+            <span class="ranking-name">Padre</span>
+            <span class="ranking-count">9 películas</span>
+        </li>
+
+    </ul>
+</div>
+<!-- JavaScript externo -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="../js/ranking.js"></script>
+</body>
+</html>
