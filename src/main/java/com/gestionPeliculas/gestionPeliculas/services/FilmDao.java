@@ -18,10 +18,12 @@ public interface FilmDao {
     FilmResponseDTO create(FilmRequestDTO filmRequestDTO, UserDetails userDetails);
     Optional<FilmResponseDTO> read(long id, UserDetails userDetails);
     List<FilmResponseDTO> readAll(UserDetails userDetails);
+    List<FilmResponseDTO> readAllByOtherUsuario(UserDetails userDetails,String username);
     Optional<FilmResponseDTO> update(long id,FilmRequestDTO filmRequestDTO, UserDetails userDetails);
     void delete(long id, UserDetails userDetails);
 
     List<FilmResponseDTO> getAllSortedByPuntuacion(Sort sort, UserDetails userDetails);
+    List<FilmResponseDTO> getAllSortedByPuntuacionOtherUsuario(String username, Sort sort, UserDetails userDetails);
     byte[] generarPdfDeFilms(String sortBy, String direction, UserDetails userDetails) throws IOException;
     List<RankingResponseDTO> getRanking();
 }

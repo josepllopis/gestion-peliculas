@@ -13,7 +13,7 @@ function getHeaders(){
 
 async function cargarRanking(){
 
-    alert('Capullo')
+
 
     const request = await fetch ('/api/v1/ranking',{
         method: 'GET',
@@ -36,6 +36,8 @@ async function cargarRanking(){
 
     ranking.forEach((usuario, index) => {
 
+
+
         let claseExtra = "";
         let posicionVisual = index + 1;
 
@@ -53,11 +55,17 @@ async function cargarRanking(){
         const li = document.createElement("li");
         li.className = `ranking-item ${claseExtra}`;
 
+
         li.innerHTML = `
             <span class="ranking-position">${posicionVisual}</span>
             <span class="ranking-name">${usuario.username.toUpperCase()}</span>
             <span class="ranking-count">${usuario.totalPeliculas} películas</span>
         `;
+
+        li.addEventListener("click", function() {
+                console.log("Usuario seleccionado:", usuario.username);
+               window.location.href = "/peliculas-ranking/" + usuario.username;
+            });
 
         rankingList.appendChild(li);
     });

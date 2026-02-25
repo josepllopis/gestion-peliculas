@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("api/v1")
+@RequestMapping("/api/v1")
 @AllArgsConstructor
 public class FilmController {
 
@@ -35,6 +35,12 @@ public class FilmController {
     @GetMapping("/films")
     public ResponseEntity<List<FilmResponseDTO>> allFilms(@AuthenticationPrincipal UserDetails userDetails){
         return ResponseEntity.ok(filmDao.readAll(userDetails));
+    }
+
+    @Operation(summary = "Lista de películas por usuario", description = "Trae la lista de todas las películas que se encuentran en la bbdd")
+    @GetMapping("/films/user/{username}")
+    public ResponseEntity<List<FilmResponseDTO>> allFilmsByOtherUser(@AuthenticationPrincipal UserDetails userDetails, @PathVariable String username){
+        return ResponseEntity.ok(filmDao.readAllByOtherUsuario(userDetails,username));
     }
 
     @Operation(summary = "Devolver película", description = "Devuelve la película de la bbdd que coincida con el ID que se le pasa por URL")
@@ -78,6 +84,21 @@ public class FilmController {
         Sort sort = Sort.by(Sort.Direction.fromString(direction),sortBy);
 
         List<FilmResponseDTO> listaFilms = filmDao.getAllSortedByPuntuacion(sort,userDetails);
+
+        if(listaFilms.isEmpty()){
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(listaFilms);
+    }
+
+    @Operation(summary = "Lista de películas ordenadas", description = "Devuelve una lista de películas ordenadas por las 2 variable que se pasan por URL")
+    @GetMapping("films/user/{username}/sorted")
+    public ResponseEntity<List<FilmResponseDTO>> getAllSortedPuntuacionOtherUsuario(@PathVariable String username,@RequestParam(defaultValue = "puntuacion") String sortBy, @RequestParam(defaultValue = "DESC") String direction, @AuthenticationPrincipal UserDetails userDetails){
+
+        Sort sort = Sort.by(Sort.Direction.fromString(direction),sortBy);
+
+        List<FilmResponseDTO> listaFilms = filmDao.getAllSortedByPuntuacionOtherUsuario(username,sort,userDetails);
 
         if(listaFilms.isEmpty()){
             return ResponseEntity.noContent().build();
