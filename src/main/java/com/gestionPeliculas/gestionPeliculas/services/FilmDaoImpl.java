@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import java.awt.*;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -79,6 +80,18 @@ public class FilmDaoImpl implements FilmDao{
     }
 
     @Override
+    public List<FilmResponseDTO> readAllByOtherUsuario(UserDetails userDetails,String username) {
+        Usuario usuarioActual = usuarioRepository.findByUsername(userDetails.getUsername())
+                .orElseThrow(() -> new RuntimeException("Usuario no loggeado"));
+
+        Usuario usuario = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+
+        return filmRepository.findByUsuario(usuario).stream().map(filmMapper::toResponse).toList();
+    }
+
+    @Override
     public Optional<FilmResponseDTO> update(long id, FilmRequestDTO filmRequestDTO, UserDetails userDetails) {
         Usuario usuario = usuarioRepository.findByUsername(userDetails.getUsername())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
@@ -128,6 +141,18 @@ public class FilmDaoImpl implements FilmDao{
 
         Usuario usuario = usuarioRepository.findByUsername(userDetails.getUsername())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        return filmRepository.findByUsuario(usuario,sort).stream().map(filmMapper::toResponse).toList();
+    }
+
+    @Override
+    public List<FilmResponseDTO> getAllSortedByPuntuacionOtherUsuario(String username, Sort sort, UserDetails userDetails) {
+        Usuario usuarioActual = usuarioRepository.findByUsername(userDetails.getUsername())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        Usuario usuario = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+
         return filmRepository.findByUsuario(usuario,sort).stream().map(filmMapper::toResponse).toList();
     }
 
