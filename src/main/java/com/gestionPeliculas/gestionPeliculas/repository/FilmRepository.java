@@ -18,9 +18,12 @@ public interface FilmRepository extends JpaRepository<Film,Long> {
     boolean existsByNombreAndDirectorAndUsuario(String nombre, String Director, Usuario usuario);
 
     @Query("""
-    SELECT new com.gestionPeliculas.gestionPeliculas.dto.RankingResponseDTO(u.username, COUNT(f))
-    FROM Film f
-    JOIN f.usuario u
+    SELECT new com.gestionPeliculas.gestionPeliculas.dto.RankingResponseDTO(
+        u.username,
+        COUNT(f)
+    )
+    FROM Usuario u
+    LEFT JOIN u.peliculas f
     GROUP BY u.username
     ORDER BY COUNT(f) DESC
 """)

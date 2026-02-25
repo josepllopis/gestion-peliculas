@@ -15,9 +15,9 @@ public class DataInitializer {
         return args -> {
             if(usuarioRepository.count() == 0) {
                 usuarioRepository.save(new Usuario("Josep", passwordEncoder.encode("1234")));
-                usuarioRepository.save(new Usuario("hermano", passwordEncoder.encode("1234")));
-                usuarioRepository.save(new Usuario("madre", passwordEncoder.encode("1234")));
-                usuarioRepository.save(new Usuario("padre", passwordEncoder.encode("1234")));
+                usuarioRepository.save(new Usuario("hermano", passwordEncoder.encode("brother4321")));
+                usuarioRepository.save(new Usuario("madre", passwordEncoder.encode("mother1234")));
+                usuarioRepository.save(new Usuario("padre", passwordEncoder.encode("matalarata13")));
             }
         };
     }

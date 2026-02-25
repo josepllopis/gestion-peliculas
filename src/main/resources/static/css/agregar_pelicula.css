@@ -1,156 +1,286 @@
-/* Importación de fuentes de google fonts */
-@import url(https://fonts.googleapis.com/css?family=Noto+Sans);
+/* ==============================
+   IMPORTACIÓN DE FUENTES
+   ============================== */
+@import url('https://fonts.googleapis.com/css?family=Noto+Sans');
 
-
-body{
-	height: 100%;
-	font-family: 'Noto Sans', sans-serif;
-  background-image: url(../img/peli2.jpg);
+/* ==============================
+   RESET GLOBAL
+   ============================== */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
-
-.contact_form{
-  width: 50%;
-  height: auto;
-  margin: 80px auto;
-  border-radius: 10px;
-  padding-top: 30px;
-  padding-bottom: 20px;
-  background-color: #fbfbfb;
-  padding-left: 30px;
-  display: flex;
-  justify-content: center; /* centra horizontalmente */
-  align-items: center;
+html, body {
+    height: 100%;
+    font-family: 'Noto Sans', sans-serif;
 }
 
-
-select{
-	background-color: #fff;
-	width: 100%;
-	float: right;
-	height: 40px;
-	border-radius: 5px;
-	border-style: solid;
-	border-width: 1px;
-	border-color: #0719A6;
-	margin-top: 10px;
-	padding-left: 10px;
-    margin-left: 20px;
-    margin-bottom: 20px;
+/* ==============================
+   BODY CON BACKGROUND
+   ============================== */
+body {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* NO center, para que no corte el formulario */
+    min-height: 100vh;
+    padding: 40px 20px;
+    background-image: url(../img/peli2.jpg);
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
 }
 
-input{
-    margin-bottom:20px;
+/* ==============================
+   CONTENEDOR DEL FORMULARIO
+   ============================== */
+.contact_form {
+    width: 100%;
+    max-width: 650px;
+    background-color: #fbfbfb;
+    border-radius: 20px;
+    padding: 50px 50px;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.3);
 }
 
+/* ==============================
+   TÍTULOS
+   ============================== */
+h1 {
+    font-size: 36px;
+    text-align: center;
+    color: #362F34;
+    margin-bottom: 8px;
+}
+
+h3 {
+    font-size: 15px;
+    text-align: center;
+    color: #666;
+    margin-bottom: 35px;
+}
+
+/* ==============================
+   FORMULARIO INTERNO
+   ============================== */
+.formulario {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+#formPeliculas{
+display: flex;
+flex-direction: column;
+gap:28px;
+}
+
+/* Cada bloque label + input */
+.formulario > div {
+    display: flex;
+    flex-direction: column;
+}
+
+/* ==============================
+   LABELS
+   ============================== */
+label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #362F34;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* ==============================
+   INPUTS Y SELECTS
+   ============================== */
 input[type="text"],
 input[type="number"],
 input[type="date"],
-input[type="tel"] {
+input[type="tel"],
+select {
     width: 100%;
-    height: 40px;
-    border-radius: 5px;
-    border: 1px solid #0719A6;
-    margin-top: 10px;
-    margin-bottom:30px
-    padding-left: 10px;
-    float: none;
-    box-sizing: border-box;
+    height: 48px;
+    padding: 0 14px;
+    border-radius: 10px;
+    margin-top:6px;
+    border: 1.5px solid #c0c8f0;
+    font-size: 15px;
+    font-family: 'Noto Sans', sans-serif;
+    background-color: #fff;
+    color: #333;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* Slider específico */
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="date"]:focus,
+input[type="tel"]:focus,
+select:focus {
+    outline: none;
+    border-color: #97d848;
+    box-shadow: 0 0 0 3px rgba(151, 216, 72, 0.2);
+}
+
+/* ==============================
+   SLIDER DE PUNTUACIÓN
+   ============================== */
+.slider-row {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+}
+
 input[type="range"] {
-    width: 90%; /* ancho fijo */
-    height: auto; /* no hereda 40px */
-    float: none;
+    width: 100%;
+    height: 6px;
+    accent-color: #362F34;
+    cursor: pointer;
+}
+
+#valorPuntuacion {
+    font-size: 22px;
+    font-weight: bold;
+    color: #362F34;
+    min-width: 40px;
+    text-align: right;
+}
+
+/* ==============================
+   BOTÓN ENVIAR
+   ============================== */
+button[type="submit"] {
+    width: 100%;
+    height: 52px;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    background-color: #362F34;
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background-color 0.2s ease, transform 0.15s ease;
+}
+
+button[type="submit"]:hover {
+    background-color: #4a3f45;
+    transform: translateY(-2px);
+}
+
+button[type="submit"] p {
+    color: #fff;
     margin: 0;
-    padding: 0;
-    margin-bottom:10px;
 }
 
-
-
-
-
-label{
-  display: block;
-	float: center;
+/* ==============================
+   PLACEHOLDER
+   ============================== */
+::placeholder {
+    color: #b0b0b0;
+    font-size: 14px;
 }
 
-button{
-	height: 45px;
-	padding-left: 5px;
-	padding-right: 5px;
-	margin-bottom: 20px;
-	margin-top: 10px;
-	text-transform: uppercase;
-	background-color: #362F34;
-	border-color: #362F34;
-	border-style: solid;
-	border-radius: 10px;
-	width: 420px;
-	color:white;
-  cursor: pointer;
+/* ==============================
+   MEDIA QUERIES - TABLETS ≤768px
+   ============================== */
+@media (max-width: 768px) {
+    body {
+        padding: 30px 15px;
+    }
+
+    .contact_form {
+        padding: 40px 35px;
+    }
+
+    h1 {
+        font-size: 28px;
+    }
+
+    h3 {
+        font-size: 14px;
+        margin-bottom: 25px;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="date"],
+    input[type="tel"],
+    select {
+        height: 44px;
+        font-size: 14px;
+    }
+
+    button[type="submit"] {
+        height: 48px;
+        font-size: 14px;
+    }
+
+    .formulario > div {
+        margin-bottom: 18px;
+    }
 }
 
+/* ==============================
+   MEDIA QUERIES - MÓVILES ≤480px
+   ============================== */
+@media (max-width: 480px) {
+    body {
+        padding: 20px 10px;
+    }
 
-button p{
-	color: #fff;
+    .contact_form {
+        padding: 30px 20px;
+        border-radius: 14px;
+    }
+
+    #formPeliculas{
+        display: flex;
+        flex-direction: column;
+        gap:28px;
+    }
+
+    h1 {
+        font-size: 22px;
+        margin-bottom: 6px;
+    }
+
+    h3 {
+        font-size: 13px;
+        margin-bottom: 20px;
+    }
+
+    label {
+        font-size: 12px;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="date"],
+    input[type="tel"],
+    select {
+        height: 42px;
+        font-size: 14px;
+        border-radius: 8px;
+    }
+
+    button[type="submit"] {
+        height: 45px;
+        font-size: 13px;
+        border-radius: 10px;
+    }
+
+    .formulario > div {
+        margin-bottom: 15px;
+    }
+
+    #valorPuntuacion {
+        font-size: 18px;
+    }
 }
-
-
-span{
-	color: #ab4493;
-}
-
-
-.aviso{
-	font-size: 13px;
-	color: #0e0e0e;
-}
-
-
-h1{
-	font-size: 39px;
-	text-align: letf;
-	padding-bottom: 20px;
-	color: #362F34;
-}
-
-
-h3{
-	font-size: 16px;
-	padding-bottom: 30px;
-	color: #0e0e0e;
-}
-
-
-p{
-	font-size: 14px;
-	color: #0e0e0e;
-}
-
-
-::-webkit-input-placeholder {
- color: #a8a8a8;
-}
-
-
-::-webkit-textarea-placeholder {
- color: #a8a8a8;
-}
-
-
-.formulario input:focus{
-	outline:0;
-	border: 1px solid #97d848;
-}
-
-
-.formulario textarea:focus{
-	outline:0;
-	border: 1px solid #97d848;
-}
-
-
-/* creado por javiniguez.com, Julio 2019 */
