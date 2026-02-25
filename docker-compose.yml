@@ -17,7 +17,7 @@ services:
       retries: 10
 
   gestion_peliculas_app:
-    image: josepllopis33/gestion-peliculas-image:latestgi   # <-- imagen de Docker Hub
+    image: josepllopis33/gestion-peliculas-image:latest   # <-- imagen de Docker Hub
     container_name: gestion_peliculas_app
     ports:
       - "8096:8096"
