@@ -1,6 +1,7 @@
 package com.gestionPeliculas.gestionPeliculas.controllers;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -18,7 +19,8 @@ public class ControllerPrincipal {
     }
 
     @GetMapping("/peliculas-ranking/{user}")
-    public String rankingIndividual(@PathVariable String user){
+    public String rankingIndividual(@PathVariable String user, Model model){
+        model.addAttribute("username", user);
         return "peliculasUsuarioRanking";
     }
 }

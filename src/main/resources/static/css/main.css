@@ -1,30 +1,37 @@
-body{
+html, body {
+    height: 100%;
+    overflow: hidden; /* evita scroll en la página entera */
     background-image: url("../img/peli2.jpg");
-
+    background-size: cover;
+    background-position: center;
 }
-
 
 .principal{
     display: flex;
-    justify-content: center; /* centra horizontalmente */
-    align-items: center;     /* centra verticalmente */
-    overflow: auto;
-    height: 90vh;
+    justify-content: center;
+    align-items: center;
+    height: calc(100vh - 56px); /* 56px es la altura del navbar */
+    overflow: hidden; /* sin scroll en el contenedor padre */
+    padding: 20px;
+    box-sizing: border-box;
 }
 
 .hijo {
     background-color: #FFF7F7;
     width: 80%;
-    height: 80%;
-    overflow: auto;
+    height: 100%; /* ocupa toda la altura disponible del padre */
+    overflow-y: auto; /* solo .hijo hace scroll verticalmente */
+    overflow-x: hidden;
     position: relative;
     text-align: center;
+    padding-bottom: 80px; /* espacio para el dock de acciones */
+    box-sizing: border-box;
 }
 
 .hijo .btn-circles {
-    position: fixed;   /* posición relativa al .hijo */
-    bottom: 20px;         /* 20px desde el fondo del div */
-    right: 20px;          /* 20px desde el borde derecho */
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
     width: 50px;
     height: 50px;
     border-radius: 50%;
@@ -72,6 +79,7 @@ body{
 h1{
     text-align: center;
     padding: 25px;
+    font-size: 28px;
 }
 
 table{
@@ -85,12 +93,12 @@ td {
   max-width: 200px;
   overflow-x: auto;
   white-space: nowrap;
-  text-align:center;
+  text-align: center;
   padding: 10px;
 }
 
 tr{
-    margin:10px;
+    margin: 10px;
 }
 
 th{
@@ -98,39 +106,39 @@ th{
 }
 
 .btn-circles {
-  width: 50px;          /* mismo ancho */
-  height: 50px;         /* mismo alto */
-  border-radius: 50%;   /* lo hace redondo */
-  display: flex;        /* centra el ícono */
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 20px;      /* tamaño del ícono */
-  padding: 0;           /* quita el padding de Bootstrap */
+  font-size: 20px;
+  padding: 0;
 }
 
 select{
-        margin: 0 auto;
-        background-color: #fff;
-    	height: 30px;
-    	border-radius: 5px;
-    	border-style: solid;
-    	border-width: 1px;
-    	border-color: #0719A6;
-    	margin-top: 10px;
-    	padding-left: 10px;
-        margin-bottom: 20px;
+    margin: 0 auto;
+    background-color: #fff;
+    height: 30px;
+    border-radius: 5px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #0719A6;
+    margin-top: 10px;
+    padding-left: 10px;
+    margin-bottom: 20px;
 }
 
 .aplicarOrden{
     background-color: #72A2FC;
-    color:white;
+    color: white;
     border-radius: 10px;
-    width:150px;
-    border-color:white;
+    width: 150px;
+    border-color: white;
 }
 
 .cerrarSesion{
-padding:10px;
+    padding: 10px;
 }
 
 /* CONTENEDOR CENTRAL OSCURO */
@@ -149,6 +157,8 @@ padding:10px;
     gap: 30px;
 
     box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+
+    z-index: 1000;
 }
 
 .action-btn,
@@ -205,7 +215,122 @@ padding:10px;
 }
 
 
+/* ================================
+   RESPONSIVE - TABLETS (≤ 768px)
+   ================================ */
+@media (max-width: 768px) {
+
+    .principal {
+        padding: 10px;
+        align-items: flex-start;
+        padding-top: 20px;
+    }
+
+    .hijo {
+        width: 100%;
+        height: auto;
+        padding: 10px;
+        padding-bottom: 90px;
+    }
+
+    h1 {
+        font-size: 18px;
+        padding: 15px 10px;
+    }
+
+    /* Selects uno debajo del otro y más anchos */
+    select {
+        display: block;
+        width: 90%;
+        margin: 8px auto;
+        padding-left: 8px;
+    }
+
+    /* La tabla ocupa todo el ancho y es scrollable */
+    table {
+        width: 100% !important;
+        padding: 5px;
+        font-size: 13px;
+    }
+
+    /* Wrapper para hacer scroll horizontal en la tabla */
+    .hijo > .table-responsive,
+    #peliculas {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    td {
+        max-width: 120px;
+        padding: 6px 8px;
+        font-size: 12px;
+    }
+
+    th {
+        font-size: 12px;
+        padding: 6px 8px;
+        white-space: nowrap;
+    }
+
+    /* Dock de acciones más compacto */
+    .acciones-container {
+        padding: 14px 25px;
+        gap: 20px;
+        bottom: 8px;
+        width: auto;
+        max-width: 90%;
+    }
+
+    .action-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 16px;
+    }
+}
 
 
+/* ================================
+   RESPONSIVE - MÓVILES (≤ 480px)
+   ================================ */
+@media (max-width: 480px) {
 
+    .navbar .navbar-brand {
+        font-size: 15px;
+    }
 
+    h1 {
+        font-size: 15px;
+        padding: 12px 5px;
+    }
+
+    span {
+        font-size: 13px;
+    }
+
+    select {
+        width: 95%;
+        font-size: 13px;
+    }
+
+    table {
+        font-size: 12px;
+    }
+
+    td, th {
+        padding: 5px 6px;
+        font-size: 11px;
+    }
+
+    /* Dock aún más pequeño en móvil */
+    .acciones-container {
+        padding: 12px 20px;
+        gap: 15px;
+    }
+
+    .action-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 14px;
+    }
+}

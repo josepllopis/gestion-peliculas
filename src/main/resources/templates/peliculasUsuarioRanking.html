@@ -39,7 +39,7 @@
         <a href="#" id="btn-atras" class="btn-circles-atras" onclick="window.location.href='/ranking'">
             <i class="fas fa-arrow-left"></i>
         </a>
-        <h1>PELÍCULAS VISTAS EN EL CINE</h1>
+        <h1>PELÍCULAS VISTAS POR <span th:text="${username.toUpperCase()}"></span></h1>
 
         <hr>
         <span>ORDENAR POR: </span>
@@ -60,6 +60,7 @@
 
         </select>
 
+        <div class="table-responsive-wrapper">
 
         <table
                 class="table table-bordered"
@@ -81,6 +82,7 @@
         </table>
 
 
+        </div>
 
 
     </div>
