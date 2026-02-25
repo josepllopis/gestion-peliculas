@@ -5,7 +5,7 @@ services:
     image: mysql:8.0
     container_name: gestion_peliculas
     ports:
-      - "3307:3306" # acceso desde host opcional
+      - "3307:3306"
     environment:
       MYSQL_ROOT_PASSWORD: Pepin_30
       MYSQL_DATABASE: gestionpeliculas
@@ -17,7 +17,7 @@ services:
       retries: 10
 
   gestion_peliculas_app:
-    build: .
+    image: josepllopis33/gestion-peliculas-image:latestgi   # <-- imagen de Docker Hub
     container_name: gestion_peliculas_app
     ports:
       - "8096:8096"
@@ -29,4 +29,5 @@ services:
       SERVER_PORT: 8096
     restart: always
     depends_on:
-      - gestion_peliculas
+      gestion_peliculas:
+        condition: service_healthy   # <-- espera a que MySQL esté listo
