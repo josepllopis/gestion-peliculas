@@ -31,13 +31,13 @@ public class FilmController {
 
 
 
-    @Operation(summary = "Lista de películas", description = "Trae la lista de todas las películas que se encuentran en la bbdd")
+    @Operation(summary = "Lista de películas", description = "Trae la lista de todas las películas que se encuentran en la bbdd del usuario loggeado")
     @GetMapping("/films")
     public ResponseEntity<List<FilmResponseDTO>> allFilms(@AuthenticationPrincipal UserDetails userDetails){
         return ResponseEntity.ok(filmDao.readAll(userDetails));
     }
 
-    @Operation(summary = "Lista de películas por usuario", description = "Trae la lista de todas las películas que se encuentran en la bbdd")
+    @Operation(summary = "Lista de películas de otro usuario", description = "Trae la lista de todas las películas  de un usuario específico que se encuentran en la bbdd")
     @GetMapping("/films/user/{username}")
     public ResponseEntity<List<FilmResponseDTO>> allFilmsByOtherUser(@AuthenticationPrincipal UserDetails userDetails, @PathVariable String username){
         return ResponseEntity.ok(filmDao.readAllByOtherUsuario(userDetails,username));
@@ -64,7 +64,7 @@ public class FilmController {
     public ResponseEntity<Void> deleteFilm(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails){
         Optional<FilmResponseDTO> film = filmDao.read(id,userDetails);
         if (film.isEmpty()) {
-            return ResponseEntity.notFound().build(); // 404
+            return ResponseEntity.notFound().build();
         }
 
         filmDao.delete(id,userDetails);
@@ -92,7 +92,7 @@ public class FilmController {
         return ResponseEntity.ok(listaFilms);
     }
 
-    @Operation(summary = "Lista de películas ordenadas", description = "Devuelve una lista de películas ordenadas por las 2 variable que se pasan por URL")
+    @Operation(summary = "Lista de películas ordenadas de un usuario", description = "Devuelve una lista de películas ordenadas de un usuario específico por las 2 variable que se pasan por URL")
     @GetMapping("films/user/{username}/sorted")
     public ResponseEntity<List<FilmResponseDTO>> getAllSortedPuntuacionOtherUsuario(@PathVariable String username,@RequestParam(defaultValue = "puntuacion") String sortBy, @RequestParam(defaultValue = "DESC") String direction, @AuthenticationPrincipal UserDetails userDetails){
 
@@ -135,6 +135,7 @@ public class FilmController {
 
     }
 
+    @Operation(summary = "Devuelve el ranking familiar", description = "Devuelve la clasificacion de los usuarios que más películas han visto")
     @GetMapping("/ranking")
     public ResponseEntity<List<RankingResponseDTO>> devolverRanking(){
 
