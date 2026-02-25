@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <title>Ranking Familiar 🎬</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
 
     <style>
         body {
@@ -17,6 +21,8 @@
         }
 
         .ranking-container {
+            position:relative;
+            padding-top: 70px;
             width: 90%;
             max-width: 800px;
             background: #ffffff;
@@ -53,6 +59,7 @@
         .ranking-item:hover {
             transform: translateY(-3px);
             box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            cursor:pointer
         }
 
         .ranking-position {
@@ -83,6 +90,8 @@
             color: #333;
         }
 
+
+
         .second {
             background: linear-gradient(135deg, #c0c0c0, #d9d9d9);
         }
@@ -90,6 +99,32 @@
         .third {
             background: linear-gradient(135deg, #cd7f32, #e6a15c);
         }
+
+       .btn-circles-atras {
+    position: absolute;   /* estaba fixed, ahora dentro del contenedor */
+    top: 20px;
+    left: 20px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 22px;
+    padding: 0;
+    background-color: #222;
+    color: #fff;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    cursor: pointer;
+    text-decoration:none;
+    transition: all 0.2s ease-in-out;
+    z-index: 100; /* suficiente para estar encima del contenido */
+}
+
+.btn-circles-atras:hover {
+    background-color: #444;
+    transform: scale(1.1);
+}
 
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px);}
@@ -110,7 +145,11 @@
 <body>
 
 <div class="ranking-container">
-    <h1>🏆 Ranking Familiar</h1>
+
+    <a href="#" id="btn-atras" class="btn-circles-atras" onclick="window.location.href='peliculas'">
+        <i class="fas fa-arrow-left"></i>
+    </a>
+    <h1>🏆 Ranking Familiar 🏆</h1>
 
     <ul class="ranking-list" id="rankingList">
 
@@ -140,6 +179,8 @@
 
     </ul>
 </div>
+
+
 <!-- JavaScript externo -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="../js/ranking.js"></script>

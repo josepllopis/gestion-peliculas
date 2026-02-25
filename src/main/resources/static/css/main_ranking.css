@@ -129,6 +129,32 @@ select{
     border-color:white;
 }
 
+ .btn-circles-atras {
+    position: absolute;   /* estaba fixed, ahora dentro del contenedor */
+    top: 20px;
+    left: 20px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 22px;
+    padding: 0;
+    background-color: #222;
+    color: #fff;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    cursor: pointer;
+    text-decoration:none;
+    transition: all 0.2s ease-in-out;
+    z-index: 100; /* suficiente para estar encima del contenido */
+}
+
+.btn-circles-atras:hover {
+    background-color: #444;
+    transform: scale(1.1);
+}
+
 
 
 
