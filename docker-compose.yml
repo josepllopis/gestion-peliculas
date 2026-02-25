@@ -1,28 +1,32 @@
 version: "3.8"
 
 services:
-  gestion_peliculas_app:
-    build: .
-    ports:
-      - "8096:8096"
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://gestion_peliculas:3306/gestionpeliculas?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&characterEncoding=UTF-8
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: Pepin_30
-    restart: always
-    depends_on:
-      gestion_peliculas:
-        condition: service_healthy
-
   gestion_peliculas:
     image: mysql:8.0
+    container_name: gestion_peliculas
     ports:
-      - "3307:3306" # acceso desde el host
+      - "3307:3306" # acceso desde host opcional
     environment:
       MYSQL_ROOT_PASSWORD: Pepin_30
       MYSQL_DATABASE: gestionpeliculas
     restart: always
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      timeout: 10s
+      interval: 10s
+      timeout: 5s
       retries: 10
+
+  gestion_peliculas_app:
+    build: .
+    container_name: gestion_peliculas_app
+    ports:
+      - "8096:8096"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://gestion_peliculas:3306/gestionpeliculas?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&characterEncoding=UTF-8
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: Pepin_30
+      SERVER_ADDRESS: 0.0.0.0
+      SERVER_PORT: 8096
+    restart: always
+    depends_on:
+      - gestion_peliculas
