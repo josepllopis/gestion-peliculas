@@ -67,7 +67,7 @@ public class FilmDaoImpl implements FilmDao{
         }
 
 
-        return filmRepository.findById(id).map(filmMapper::toResponse);
+        return Optional.of(filmMapper.toResponse(pelicula));
     }
 
     @Override
