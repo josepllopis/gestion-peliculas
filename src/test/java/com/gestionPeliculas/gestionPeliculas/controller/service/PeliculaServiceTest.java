@@ -17,6 +17,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.internal.junit.JUnitRule;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
@@ -220,5 +221,238 @@ public class PeliculaServiceTest {
 
         verifyNoMoreInteractions(filmRepository,filmMapper);
     }
+
+    @Test
+    public void shouldReadAllFilmsByOtherUsuario(){
+        Usuario usuarioLoggeado = new Usuario("Jllopis33","Pepin");
+        Usuario usuarioLeer = new Usuario("Brother","Pepin");
+        Film film = new Film(1L,"Terminator 2",new Date(),300,"James Cameron",Pais.ESTADOS_UNIDOS,6,"Prime Video",usuarioLeer);
+        Film film2 = new Film(2L,"Guerra Mundial Z",new Date(),250,"Moris Forst",Pais.ESTADOS_UNIDOS,6,"Prime Video",usuarioLeer);
+        FilmResponseDTO response1 = new FilmResponseDTO(1L,"Terminator 2", film.getFecha(),"300","James Cameron","Estados Unidos",6,"Prime Video");
+        FilmResponseDTO response2 = new FilmResponseDTO(2L,"Guerra Mundial Z", film2.getFecha(),"250","Moris Forst","Estados Unidos",6,"Prime Video");
+
+        List<Film> films = List.of(film,film2);
+        when(usuarioRepository.findByUsername(usuarioLoggeado.getUsername())).thenReturn(Optional.of(usuarioLoggeado));
+        when(usuarioRepository.findByUsername(usuarioLeer.getUsername())).thenReturn(Optional.of(usuarioLeer));
+
+
+        when(filmMapper.toResponse(films.get(0))).thenReturn(response1);
+        when(filmMapper.toResponse(films.get(1))).thenReturn(response2);
+        when(filmRepository.findByUsuario(usuarioLeer)).thenReturn(films);
+
+
+        List<FilmResponseDTO> response = filmDao.readAllByOtherUsuario(usuarioLoggeado,"Brother");
+
+        assertEquals(2,response.size());
+        assertEquals("Terminator 2", response.get(0).getNombre());
+        assertEquals("Guerra Mundial Z", response.get(1).getNombre());
+
+        verify(usuarioRepository).findByUsername(usuarioLoggeado.getUsername());
+        verify(usuarioRepository).findByUsername(usuarioLeer.getUsername());
+        verify(filmRepository).findByUsuario(usuarioLeer);
+        verify(filmMapper).toResponse(film);
+        verify(filmMapper).toResponse(film2);
+        verifyNoMoreInteractions(filmRepository, filmMapper, usuarioRepository);
+    }
+
+    @Test
+    public void shouldThrowExceptionWhenUserNotLoggedReadByOtherUsuario(){
+        Usuario usuarioLoggeado = new Usuario("Jllopis33","Pepin");
+        when(usuarioRepository.findByUsername(usuarioLoggeado.getUsername())).thenReturn(Optional.empty());
+
+        RuntimeException exception = assertThrows(RuntimeException.class, ()->filmDao.readAllByOtherUsuario(usuarioLoggeado,"Brother"));
+
+        assertEquals("Usuario no loggeado",exception.getMessage());
+        verify(usuarioRepository).findByUsername(usuarioLoggeado.getUsername());
+        verifyNoMoreInteractions(usuarioRepository);
+    }
+
+    @Test
+    public void shouldThrowExceptionWhenUserNotFoundReadAllByOtherUsuario(){
+
+        //GIVEN
+        Usuario usuarioLoggeado = new Usuario("Jllopis33","Pepin");
+        Usuario usuarioNoEncontrado = new Usuario("Brother","Pepin");
+        when(usuarioRepository.findByUsername(usuarioLoggeado.getUsername())).thenReturn(Optional.of(usuarioLoggeado));
+        when(usuarioRepository.findByUsername(usuarioNoEncontrado.getUsername())).thenReturn(Optional.empty());
+
+        //WHEN & THEN
+        RuntimeException exception = assertThrows(RuntimeException.class,
+                ()->filmDao.readAllByOtherUsuario(usuarioLoggeado,"Brother"));
+
+        assertEquals("Usuario no encontrado",exception.getMessage());
+
+        verify(usuarioRepository).findByUsername(usuarioLoggeado.getUsername());
+        verify(usuarioRepository).findByUsername(usuarioNoEncontrado.getUsername());
+
+        verifyNoMoreInteractions(filmRepository,filmMapper);
+
+
+    }
+
+    @Test
+    public void shouldUpdateFilm(){
+        //GIVEN
+        Usuario usuarioLoggeado = new Usuario("Jllopis33","Pepin");
+        when(usuarioRepository.findByUsername(usuarioLoggeado.getUsername())).thenReturn(Optional.of(usuarioLoggeado));
+        FilmRequestDTO filmRequestDTO = new FilmRequestDTO("Torrente",new Date(),300,"Santiago Segura", Pais.ESPANA,6,"AXION");
+        Film film = new Film(1L,filmRequestDTO.getNombre(),filmRequestDTO.getFecha(),filmRequestDTO.getDuracion(),filmRequestDTO.getDirector(),filmRequestDTO.getPais(),filmRequestDTO.getPuntuacion(),filmRequestDTO.getCinema(),usuarioLoggeado);
+        when(filmRepository.findById(film.getId())).thenReturn(Optional.of(film));
+        film.setCinema("Prime");
+        film.setNombre("Torrente");
+        film.setDirector("Santiago Segura");
+        FilmResponseDTO filmResponseDTO = new FilmResponseDTO(1L,film.getNombre(), film.getFecha(),String.valueOf(film.getDuracion()),film.getDirector(),film.getPais().getNombre(),film.getDuracion(),film.getCinema());
+        when(filmMapper.toResponse(film)).thenReturn(filmResponseDTO);
+        when(filmRepository.save(film)).thenReturn(film);
+
+
+        //WHEN
+        Optional<FilmResponseDTO> response = filmDao.update(1L,filmRequestDTO,usuarioLoggeado);
+
+        assertEquals(filmRequestDTO.getNombre(),response.get().getNombre());
+
+        verify(usuarioRepository).findByUsername(usuarioLoggeado.getUsername());
+        verify(filmRepository).findById(film.getId());
+        verify(filmMapper).toResponse(film);
+
+
+        verifyNoMoreInteractions(usuarioRepository,filmRepository,filmMapper);
+    }
+
+    @Test
+    public void shouldThrowExceptionUserNotFoundUpdate(){
+        //GIVEN
+        Usuario usuario = new Usuario("Jllopis33","Pepin_30");
+        FilmRequestDTO filmRequestDTO = new FilmRequestDTO("Torrente",new Date(),300,"Santiago Segura", Pais.ESPANA,6,"AXION");
+        when(usuarioRepository.findByUsername(usuario.getUsername())).thenReturn(Optional.empty());
+
+        //WHEN & THEN
+        RuntimeException exception = assertThrows(RuntimeException.class,
+                ()->filmDao.update(1L,filmRequestDTO,usuario));
+
+        assertEquals("Usuario no encontrado",exception.getMessage());
+
+        verify(usuarioRepository).findByUsername(usuario.getUsername());
+        verifyNoMoreInteractions(usuarioRepository,filmRepository,filmMapper);
+    }
+
+    @Test
+    public void shouldThrowExceptionWhenFilmNotFoundUpdate(){
+        //GIVEN
+        Usuario usuario = new Usuario("Jllopis33","Pepin_30");
+        FilmRequestDTO filmRequestDTO = new FilmRequestDTO("Torrente",new Date(),300,"Santiago Segura", Pais.ESPANA,6,"AXION");
+        when(usuarioRepository.findByUsername(usuario.getUsername())).thenReturn(Optional.of(usuario));
+        when(filmRepository.findById(1L)).thenReturn(Optional.empty());
+
+        //WHEN & THEN
+        FilmNotFoundException filmNotFoundException = assertThrows(FilmNotFoundException.class,
+                ()->filmDao.update(1L,filmRequestDTO,usuario));
+
+        assertEquals("Película no encontrada",filmNotFoundException.getMessage());
+
+        verify(usuarioRepository).findByUsername(usuario.getUsername());
+        verify(filmRepository).findById(1L);
+
+        verifyNoMoreInteractions(usuarioRepository,filmRepository,filmMapper);
+    }
+
+    @Test
+    public void shouldThrowExceptionWhenFilmBelongsToAnotherUserUpdate(){
+
+        // GIVEN
+        Usuario usuarioLoggeado = new Usuario("Jllopis33","Pepin");
+        Usuario otraPersona = new Usuario("Brother","Pepin");
+        FilmRequestDTO filmRequestDTO = new FilmRequestDTO("Torrente", new Date(), 300, "Santiago Segura", Pais.ESPANA, 6, "AXION");
+
+
+        Film film = new Film(1L, filmRequestDTO.getNombre(), filmRequestDTO.getFecha(), filmRequestDTO.getDuracion(), filmRequestDTO.getDirector(), filmRequestDTO.getPais(), filmRequestDTO.getPuntuacion(), filmRequestDTO.getCinema(), otraPersona);
+
+        when(usuarioRepository.findByUsername(usuarioLoggeado.getUsername())).thenReturn(Optional.of(usuarioLoggeado));
+        when(filmRepository.findById(1L)).thenReturn(Optional.of(film));
+
+        // WHEN & THEN
+        FilmNotFoundException exception = assertThrows(FilmNotFoundException.class,
+                () -> filmDao.update(1L, filmRequestDTO, usuarioLoggeado));
+
+        assertEquals("Película no encontrada", exception.getMessage());
+        verify(usuarioRepository).findByUsername(usuarioLoggeado.getUsername());
+        verify(filmRepository).findById(1L);
+        verifyNoMoreInteractions(usuarioRepository, filmRepository, filmMapper);
+    }
+
+    @Test
+    public void shouldDeleteFilm(){
+        Usuario usuario = new Usuario("Jllopis33","Pepin_30");
+        Film film = new Film(1L,"Torrente",new Date(),300,"Santiago Segura",Pais.ESPANA,7.5,"Xativa",usuario);
+        when(usuarioRepository.findByUsername(usuario.getUsername())).thenReturn(Optional.of(usuario));
+        when(filmRepository.findById(film.getId())).thenReturn(Optional.of(film));
+
+        //WHEN
+        filmDao.delete(1L,usuario);
+
+        verify(usuarioRepository).findByUsername(usuario.getUsername());
+        verify(filmRepository).findById(film.getId());
+        verify(filmRepository).delete(film);
+        verifyNoMoreInteractions(usuarioRepository,filmRepository,filmMapper);
+    }
+
+
+    @Test
+    public void shouldThrowExceptionUserNotFoundDelete(){
+        //GIVEN
+        Usuario usuario = new Usuario("Jllopis33","Pepin_30");
+        when(usuarioRepository.findByUsername(usuario.getUsername())).thenReturn(Optional.empty());
+
+        //WHEN & THEN
+        RuntimeException runtimeException = assertThrows(RuntimeException.class,
+                ()->filmDao.delete(1L,usuario));
+
+        assertEquals("Usuario no encontrado",runtimeException.getMessage());
+        verify(usuarioRepository).findByUsername(usuario.getUsername());
+        verifyNoMoreInteractions(filmRepository);
+    }
+
+    @Test
+    public void shouldThrowExceptionFilmNotFoundException(){
+
+        //GIVEN
+        Usuario usuario = new Usuario("Jllopis33","Pepin_30");
+        when(usuarioRepository.findByUsername(usuario.getUsername())).thenReturn(Optional.of(usuario));
+        when(filmRepository.findById(1L)).thenReturn(Optional.empty());
+
+
+        //WHEN & THEN
+        FilmNotFoundException filmNotFoundException = assertThrows(FilmNotFoundException.class,
+                ()->filmDao.delete(1L,usuario));
+
+        assertEquals("Película no encontrada", filmNotFoundException.getMessage());
+
+        verify(usuarioRepository).findByUsername(usuario.getUsername());
+        verify(filmRepository).findById(1L);
+        verifyNoMoreInteractions(usuarioRepository,filmRepository);
+    }
+
+    @Test
+    public void shouldThrowExceptionWhenFilmBelongsToAnotherUserDelete(){
+
+        //GIVEN
+        Usuario usuario = new Usuario("Jllopis33","Pepin_30");
+        Usuario otroUsuario = new Usuario("Jllopis20","Pepin_30");
+        Film film = new Film(1L,"Torrente",new Date(),300,"Santiago Segura",Pais.ESPANA,7.5,"Xativa",otroUsuario);
+        when(usuarioRepository.findByUsername(usuario.getUsername())).thenReturn(Optional.of(usuario));
+        when(filmRepository.findById(1L)).thenReturn(Optional.of(film));
+
+        //WHEN & THEN
+        FilmNotFoundException filmNotFoundException = assertThrows(FilmNotFoundException.class,
+                ()->filmDao.delete(1L,usuario));
+
+        assertEquals("Película no encontrada",filmNotFoundException.getMessage());
+
+        verify(usuarioRepository).findByUsername(usuario.getUsername());
+        verify(filmRepository).findById(1L);
+
+        verifyNoMoreInteractions(usuarioRepository,filmRepository);
+    }
+
 
 }
