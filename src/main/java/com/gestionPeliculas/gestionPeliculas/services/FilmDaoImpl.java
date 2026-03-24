@@ -156,7 +156,11 @@ public class FilmDaoImpl implements FilmDao{
     }
 
     @Override
-    public List<RankingResponseDTO> getRanking() {
+    public List<RankingResponseDTO> getRanking(UserDetails userDetails) {
+
+        Usuario usuarioActual = usuarioRepository.findByUsername(userDetails.getUsername())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
         return filmRepository.getRanking();
     }
 

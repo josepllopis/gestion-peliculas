@@ -137,9 +137,9 @@ public class FilmController {
 
     @Operation(summary = "Devuelve el ranking familiar", description = "Devuelve la clasificacion de los usuarios que más películas han visto")
     @GetMapping("/ranking")
-    public ResponseEntity<List<RankingResponseDTO>> devolverRanking(){
+    public ResponseEntity<List<RankingResponseDTO>> devolverRanking(@AuthenticationPrincipal UserDetails userDetails){
 
-        List<RankingResponseDTO> ranking = filmDao.getRanking();
+        List<RankingResponseDTO> ranking = filmDao.getRanking(userDetails);
 
         if(ranking.isEmpty()) {
             return ResponseEntity.noContent().build();

@@ -1,7 +1,8 @@
-package com.gestionPeliculas.gestionPeliculas.controller.service;
+package com.gestionPeliculas.gestionPeliculas.service;
 
 import com.gestionPeliculas.gestionPeliculas.dto.FilmRequestDTO;
 import com.gestionPeliculas.gestionPeliculas.dto.FilmResponseDTO;
+import com.gestionPeliculas.gestionPeliculas.dto.RankingResponseDTO;
 import com.gestionPeliculas.gestionPeliculas.enums.Pais;
 import com.gestionPeliculas.gestionPeliculas.exception.FilmNotFoundException;
 import com.gestionPeliculas.gestionPeliculas.exception.MovieAlreadyExistsException;
@@ -15,18 +16,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.internal.junit.JUnitRule;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.userdetails.UserDetails;
 
-import java.time.LocalDate;
+import java.io.IOException;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.awaitility.Awaitility.given;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -454,5 +451,208 @@ public class PeliculaServiceTest {
         verifyNoMoreInteractions(usuarioRepository,filmRepository);
     }
 
+    @Test
+    public void shouldGetAllFilmsSortedByPuntuacion(){
 
+        //GIVEN
+        Usuario usuario = new Usuario("Jllopis33", "Pepin_30");
+        Film film = new Film(1L,"Torrente",new Date(),300,"Santiago Segura",Pais.ESPANA,7.5,"Xativa",usuario);
+        Film film2 = new Film(2L,"Terminator",new Date(),160,"James Cameron",Pais.ESTADOS_UNIDOS,7.2,"Valencia",usuario);
+        List<Film> films = List.of(film,film2);
+        Sort sort = Sort.by(Sort.Direction.DESC,"puntuacion");
+        FilmResponseDTO filmResponseDTO = new FilmResponseDTO(1L,film.getNombre(), film.getFecha(),String.valueOf(film.getDuracion()),film.getDirector(),film.getPais().getNombre(),film.getDuracion(),film.getCinema());
+        FilmResponseDTO filmResponseDTO2 = new FilmResponseDTO(2L,film2.getNombre(), film2.getFecha(),String.valueOf(film2.getDuracion()),film2.getDirector(),film2.getPais().getNombre(),film2.getDuracion(),film2.getCinema());
+        when(usuarioRepository.findByUsername(usuario.getUsername())).thenReturn(Optional.of(usuario));
+        when(filmMapper.toResponse(film)).thenReturn(filmResponseDTO);
+        when(filmMapper.toResponse(film2)).thenReturn(filmResponseDTO2);
+        when(filmRepository.findByUsuario(usuario,sort)).thenReturn(films);
+
+        //WHEN
+        List<FilmResponseDTO> listaResponse = filmDao.getAllSortedByPuntuacion(sort,usuario);
+
+
+        //THEN
+        assertNotNull(listaResponse);
+        assertEquals(2,listaResponse.size());
+        assertEquals("Torrente",listaResponse.get(0).getNombre());
+        assertEquals("Terminator",listaResponse.get(1).getNombre());
+
+        verify(usuarioRepository).findByUsername(usuario.getUsername());
+        verify(filmMapper).toResponse(film);
+        verify(filmMapper).toResponse(film2);
+        verify(filmRepository).findByUsuario(usuario,sort);
+        verifyNoMoreInteractions(usuarioRepository,filmRepository,filmMapper);
+
+    }
+
+    @Test
+    public void shouldThrowExceptionWhenUserNotFoundGetSortedByPuntuacion(){
+
+        //GIVEN
+        Usuario usuario = new Usuario("Jllopis33","Pepin_30");
+        Sort sort = Sort.by(Sort.Direction.DESC,"puntuacion");
+        when(usuarioRepository.findByUsername(usuario.getUsername())).thenReturn(Optional.empty());
+
+        //WHEN & THEN
+        RuntimeException runtimeException = assertThrows(RuntimeException.class,
+                ()->filmDao.getAllSortedByPuntuacion(sort,usuario));
+
+        assertEquals("Usuario no encontrado", runtimeException.getMessage());
+        verify(usuarioRepository).findByUsername(usuario.getUsername());
+        verifyNoMoreInteractions(usuarioRepository,filmRepository);
+    }
+
+    @Test
+    public void shouldGetAllFilmsSortedByPuntuacionOtherUsuario(){
+
+        //GIVEN
+        Usuario usuario = new Usuario("Jllopis33", "Pepin_30");
+        Usuario otroUsuario = new Usuario("Brother", "Pepin_30");
+        Film film = new Film(1L,"Torrente",new Date(),300,"Santiago Segura",Pais.ESPANA,7.5,"Xativa",otroUsuario);
+        Film film2 = new Film(2L,"Terminator",new Date(),160,"James Cameron",Pais.ESTADOS_UNIDOS,7.2,"Valencia",otroUsuario);
+        List<Film> films = List.of(film,film2);
+        Sort sort = Sort.by(Sort.Direction.DESC,"puntuacion");
+        FilmResponseDTO filmResponseDTO = new FilmResponseDTO(1L,film.getNombre(), film.getFecha(),String.valueOf(film.getDuracion()),film.getDirector(),film.getPais().getNombre(),film.getDuracion(),film.getCinema());
+        FilmResponseDTO filmResponseDTO2 = new FilmResponseDTO(2L,film2.getNombre(), film2.getFecha(),String.valueOf(film2.getDuracion()),film2.getDirector(),film2.getPais().getNombre(),film2.getDuracion(),film2.getCinema());
+        when(usuarioRepository.findByUsername(usuario.getUsername())).thenReturn(Optional.of(usuario));
+        when(usuarioRepository.findByUsername(otroUsuario.getUsername())).thenReturn(Optional.of(otroUsuario));
+        when(filmMapper.toResponse(film)).thenReturn(filmResponseDTO);
+        when(filmMapper.toResponse(film2)).thenReturn(filmResponseDTO2);
+        when(filmRepository.findByUsuario(otroUsuario,sort)).thenReturn(films);
+
+        //WHEN
+        List<FilmResponseDTO> listaResponse = filmDao.getAllSortedByPuntuacionOtherUsuario("Brother",sort,usuario);
+
+
+        //THEN
+        assertNotNull(listaResponse);
+        assertEquals(2,listaResponse.size());
+        assertEquals("Torrente",listaResponse.get(0).getNombre());
+        assertEquals("Terminator",listaResponse.get(1).getNombre());
+
+        verify(usuarioRepository).findByUsername(usuario.getUsername());
+        verify(usuarioRepository).findByUsername(otroUsuario.getUsername());
+        verify(filmMapper).toResponse(film);
+        verify(filmMapper).toResponse(film2);
+        verify(filmRepository).findByUsuario(otroUsuario,sort);
+        verifyNoMoreInteractions(usuarioRepository,filmRepository,filmMapper);
+    }
+
+    @Test
+    public void shouldThrowExceptionWhenLoggedUserNotFoundGetSortedOtherUsuario(){
+
+        //GIVEN
+        Usuario usuario = new Usuario("Jllopis33","Pepin_30");
+        Sort sort = Sort.by(Sort.Direction.DESC,"puntuacion");
+        when(usuarioRepository.findByUsername(usuario.getUsername())).thenReturn(Optional.empty());
+
+        //WHEN & THEN
+        RuntimeException runtimeException = assertThrows(RuntimeException.class,
+                ()->filmDao.getAllSortedByPuntuacionOtherUsuario("Brother",sort,usuario));
+
+        assertEquals("Usuario no encontrado", runtimeException.getMessage());
+        verify(usuarioRepository).findByUsername(usuario.getUsername());
+        verifyNoMoreInteractions(usuarioRepository,filmRepository);
+    }
+
+    @Test
+    public void shouldThrowExceptionWhenTargetUserNotFoundGetSortedOtherUsuario(){
+
+        //GIVEN
+        Usuario usuario = new Usuario("Jllopis33","Pepin_30");
+        Usuario otroUsuario = new Usuario("Brother","Pepin_30");
+        Sort sort = Sort.by(Sort.Direction.DESC,"puntuacion");
+
+        when(usuarioRepository.findByUsername(usuario.getUsername())).thenReturn(Optional.of(usuario));
+        when(usuarioRepository.findByUsername(otroUsuario.getUsername())).thenReturn(Optional.empty());
+
+
+        //WHEN & THEN
+        RuntimeException runtimeException = assertThrows(RuntimeException.class,
+                ()->filmDao.getAllSortedByPuntuacionOtherUsuario("Brother",sort,usuario));
+
+        assertEquals("Usuario no encontrado",runtimeException.getMessage());
+        verify(usuarioRepository).findByUsername(usuario.getUsername());
+        verify(usuarioRepository).findByUsername(otroUsuario.getUsername());
+        verifyNoMoreInteractions(usuarioRepository,filmRepository,filmMapper);
+    }
+
+    @Test
+    public void shouldGetRanking(){
+        //GIVEN
+
+        Usuario usuario = new Usuario("Jllopis33","Pepin_30");
+        //WHEN
+        List<RankingResponseDTO> response = filmDao.getRanking(usuario);
+
+        assertNotNull(response);
+        verify(filmRepository).getRanking();
+    }
+
+    @Test
+    public void shouldGenerarPdfDeFilms() throws IOException {
+
+        // GIVEN
+        Usuario usuario = new Usuario("Jllopis33","Pepin_30");
+        Film film = new Film(1L, "Torrente", new Date(), 300, "Santiago Segura", Pais.ESPANA, 7.5, "Xativa", usuario);
+        Film film2 = new Film(2L, "Terminator", new Date(), 160, "James Cameron", Pais.ESTADOS_UNIDOS, 7.2, "Valencia", usuario);
+        Sort sort = Sort.by(Sort.Direction.DESC, "puntuacion");
+        FilmResponseDTO filmResponseDTO = new FilmResponseDTO(1L, film.getNombre(), film.getFecha(), String.valueOf(film.getDuracion()), film.getDirector(), film.getPais().getNombre(), film.getDuracion(), film.getCinema());
+        FilmResponseDTO filmResponseDTO2 = new FilmResponseDTO(2L, film2.getNombre(), film2.getFecha(), String.valueOf(film2.getDuracion()), film2.getDirector(), film2.getPais().getNombre(), film2.getDuracion(), film2.getCinema());
+
+        when(usuarioRepository.findByUsername(usuario.getUsername())).thenReturn(Optional.of(usuario));
+        when(filmRepository.findByUsuario(usuario, sort)).thenReturn(List.of(film, film2));
+        when(filmMapper.toResponse(film)).thenReturn(filmResponseDTO);
+        when(filmMapper.toResponse(film2)).thenReturn(filmResponseDTO2);
+
+        // WHEN
+        byte[] response = filmDao.generarPdfDeFilms("puntuacion", "DESC", usuario);
+
+        // THEN
+        assertNotNull(response);
+        assertTrue(response.length > 0);
+
+        verify(usuarioRepository).findByUsername(usuario.getUsername());
+        verify(filmRepository).findByUsuario(usuario, sort);
+        verify(filmMapper).toResponse(film);
+        verify(filmMapper).toResponse(film2);
+        verifyNoMoreInteractions(usuarioRepository, filmRepository, filmMapper);
+
+    }
+
+    @Test
+    public void shouldReturnNullWhenNoFilms() throws IOException {
+
+        // GIVEN
+        Usuario usuario = new Usuario("Jllopis33","Pepin_30");
+        Sort sort = Sort.by(Sort.Direction.DESC, "puntuacion");
+
+        when(usuarioRepository.findByUsername(usuario.getUsername())).thenReturn(Optional.of(usuario));
+        when(filmRepository.findByUsuario(usuario, sort)).thenReturn(List.of()); // ✅ lista vacía
+
+        // WHEN
+        byte[] response = filmDao.generarPdfDeFilms("puntuacion", "DESC", usuario);
+
+        // THEN
+        assertNull(response);
+        verify(usuarioRepository).findByUsername(usuario.getUsername());
+        verify(filmRepository).findByUsuario(usuario, sort);
+        verifyNoMoreInteractions(usuarioRepository, filmRepository, filmMapper); // mapper nunca se llama
+    }
+
+    @Test
+    public void shouldThrowExceptionWhenUserNotFoundGenerarPdf(){
+
+        //GIVEN
+        Usuario usuario = new Usuario("Jllopis33","Pepin_30");
+        when(usuarioRepository.findByUsername(usuario.getUsername())).thenReturn(Optional.empty());
+
+        //WHEN && THEN
+        RuntimeException runtimeException = assertThrows(RuntimeException.class,
+                ()->filmDao.generarPdfDeFilms("puntuación","ASC",usuario));
+
+        assertEquals("Usuario no encontrado",runtimeException.getMessage());
+        verify(usuarioRepository).findByUsername(usuario.getUsername());
+        verifyNoMoreInteractions(usuarioRepository,filmRepository,filmMapper);
+    }
 }
