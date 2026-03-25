@@ -25,5 +25,5 @@ public interface FilmDao {
     List<FilmResponseDTO> getAllSortedByPuntuacion(Sort sort, UserDetails userDetails);
     List<FilmResponseDTO> getAllSortedByPuntuacionOtherUsuario(String username, Sort sort, UserDetails userDetails);
     byte[] generarPdfDeFilms(String sortBy, String direction, UserDetails userDetails) throws IOException;
-    List<RankingResponseDTO> getRanking();
+    List<RankingResponseDTO> getRanking(UserDetails userDetails);
 }

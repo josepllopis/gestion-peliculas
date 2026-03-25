@@ -67,7 +67,7 @@ public class FilmDaoImpl implements FilmDao{
         }
 
 
-        return filmRepository.findById(id).map(filmMapper::toResponse);
+        return Optional.of(filmMapper.toResponse(pelicula));
     }
 
     @Override
@@ -105,17 +105,17 @@ public class FilmDaoImpl implements FilmDao{
         }
 
 
-        return filmRepository.findById(id).map(film->{
-            film.setPais(filmRequestDTO.getPais());
-            film.setFecha(filmRequestDTO.getFecha());
-            film.setDuracion(filmRequestDTO.getDuracion());
-            film.setPuntuacion(filmRequestDTO.getPuntuacion());
-            film.setNombre(filmRequestDTO.getNombre());
-            film.setDirector(filmRequestDTO.getDirector());
-            film.setCinema(filmRequestDTO.getCinema());
-            filmRepository.save(film);
-            return filmMapper.toResponse(film);
-        });
+            pelicula.setPais(filmRequestDTO.getPais());
+            pelicula.setFecha(filmRequestDTO.getFecha());
+            pelicula.setDuracion(filmRequestDTO.getDuracion());
+            pelicula.setPuntuacion(filmRequestDTO.getPuntuacion());
+            pelicula.setNombre(filmRequestDTO.getNombre());
+            pelicula.setDirector(filmRequestDTO.getDirector());
+            pelicula.setCinema(filmRequestDTO.getCinema());
+            filmRepository.save(pelicula);
+
+            return Optional.of(filmMapper.toResponse(pelicula));
+
     }
 
     @Override
@@ -132,8 +132,7 @@ public class FilmDaoImpl implements FilmDao{
            throw new FilmNotFoundException("Película no encontrada");
         }
 
-        Optional<Film> filmEliminar = filmRepository.findById(id);
-        filmEliminar.ifPresent(filmRepository::delete);
+        filmRepository.delete(pelicula);
     }
 
     @Override
@@ -157,7 +156,11 @@ public class FilmDaoImpl implements FilmDao{
     }
 
     @Override
-    public List<RankingResponseDTO> getRanking() {
+    public List<RankingResponseDTO> getRanking(UserDetails userDetails) {
+
+        Usuario usuarioActual = usuarioRepository.findByUsername(userDetails.getUsername())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
         return filmRepository.getRanking();
     }
 

@@ -3,6 +3,7 @@ package com.gestionPeliculas.gestionPeliculas.utils;
 import com.gestionPeliculas.gestionPeliculas.models.Usuario;
 import com.gestionPeliculas.gestionPeliculas.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -22,10 +23,10 @@ public class CustomUserDetailsService implements UserDetailsService {
         Usuario usuario = usuarioRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
 
-        // Construimos un UserDetails usando el password ya codificado
-        return org.springframework.security.core.userdetails.User.builder()
+
+        return User.builder()
                 .username(usuario.getUsername())
-                .password(usuario.getPassword()) // contraseña ya codificada en la BBDD
+                .password(usuario.getPassword())
                 .roles("USER")
                 .build();
     }

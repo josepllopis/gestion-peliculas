@@ -124,7 +124,7 @@ async function agregarPelicula(nombre,pais,cine,duracion,director,puntuacion,fec
       headers: getHeaders(),
       body: JSON.stringify(datos)
     });
-    window.location.href = "http://localhost:8096/peliculas";
+    window.location.href = "peliculas";
 }
 
 function getHeaders(){
