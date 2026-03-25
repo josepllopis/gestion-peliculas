@@ -270,6 +270,28 @@ public class PeliculaControllerTest {
 
     @Test
     @WithMockUser(username = "Jllopis33")
+    public void shouldGetAllSortedOtherUsuarioCustomParams() throws Exception {
+
+        //GIVEN
+        FilmResponseDTO responseEsperado = new FilmResponseDTO(1L,"Terminator", new Date(),"300","James Cameron","Estados Unidos",6,"Prime Video");
+        FilmResponseDTO responseEsperado2 = new FilmResponseDTO(2L,"Torrente Presidente", new Date(),"200","Santiago Segura","España",7,"Cine Axión");
+        List<FilmResponseDTO> filmResponseDTOS = List.of(responseEsperado,responseEsperado2);
+
+        when(filmDao.getAllSortedByPuntuacionOtherUsuario(any(String.class),any(Sort.class),any(UserDetails.class))).thenReturn(filmResponseDTOS);
+
+        mockMvc.perform(get("/api/v1/films/user/jllopis33/sorted")
+                        .param("sortBy","director")
+                        .param("direction","ASC"))
+
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].nombre").value("Terminator"))
+                .andExpect(jsonPath("$[1].nombre").value("Torrente Presidente"));
+
+        verify(filmDao).getAllSortedByPuntuacionOtherUsuario(any(String.class),any(Sort.class),any(UserDetails.class));
+    }
+
+    @Test
+    @WithMockUser(username = "Jllopis33")
     public void shouldReturnNotContentAllSortedOtherUsuario() throws Exception {
 
         //GIVEN
@@ -289,7 +311,7 @@ public class PeliculaControllerTest {
 
         //GIVEN
         byte [] pdf = new byte[256];
-        when(filmDao.generarPdfDeFilms(any(String.class),any(String.class),any(UserDetails.class))).thenReturn(pdf);
+        when(filmDao.generarPdfDeFilms(eq("puntuacion"),eq("DESC"),any(UserDetails.class))).thenReturn(pdf);
 
         //WHEN & THEN
         mockMvc.perform(get("/api/v1/films/pdf"))
@@ -299,7 +321,25 @@ public class PeliculaControllerTest {
 
 
 
-        verify(filmDao).generarPdfDeFilms(any(String.class),any(String.class),any(UserDetails.class));
+        verify(filmDao).generarPdfDeFilms(eq("puntuacion"),eq("DESC"),any(UserDetails.class));
+    }
+
+    @Test
+    @WithMockUser(username = "Jllopis33")
+    public void shouldExportPdfWithCustomParams() throws Exception {
+
+        // GIVEN
+        byte[] pdf = new byte[256];
+        when(filmDao.generarPdfDeFilms(eq("nombre"), eq("ASC"), any(UserDetails.class)))
+                .thenReturn(pdf);
+
+        // WHEN & THEN
+        mockMvc.perform(get("/api/v1/films/pdf")
+                        .param("sortBy", "nombre")
+                        .param("direction", "ASC"))
+                .andExpect(status().isOk());
+
+        verify(filmDao).generarPdfDeFilms(eq("nombre"), eq("ASC"), any(UserDetails.class));
     }
 
     @Test
