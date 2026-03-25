@@ -582,6 +582,7 @@ public class PeliculaServiceTest {
         //GIVEN
 
         Usuario usuario = new Usuario("Jllopis33","Pepin_30");
+        when(usuarioRepository.findByUsername("Jllopis33")).thenReturn(Optional.of(usuario));
         //WHEN
         List<RankingResponseDTO> response = filmDao.getRanking(usuario);
 
